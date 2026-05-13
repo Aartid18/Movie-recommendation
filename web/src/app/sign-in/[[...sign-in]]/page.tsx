@@ -1,0 +1,21 @@
+import { SignIn } from "@clerk/nextjs";
+
+export default function SignInPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#050508] px-4">
+      <SignIn
+        appearance={{
+          elements: {
+            rootBox: "mx-auto",
+            card: "bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl",
+          },
+        }}
+        routing="path"
+        path="/sign-in"
+        signUpUrl="/sign-up"
+        forceRedirectUrl="/dashboard"
+        fallbackRedirectUrl="/dashboard"
+      />
+    </div>
+  );
+}

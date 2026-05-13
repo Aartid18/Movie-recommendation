@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String          @id @default(cuid())
+  clerkId      String          @unique
+  email        String?
+  displayName  String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  preference   UserPreference?
+  ratings      Rating[]
+  watchEvents  WatchEvent[]
+  savedMovies  SavedMovie[]
+  reviews      Review[]
+}
+
+model UserPreference {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  genres      String[]
+  actorNames  String[]
+  moodSlugs   String[]
+  languages   String[]
+  seedTmdbIds Int[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CachedMovie {
+  tmdbId       Int      @id
+  title        String
+  overview     String   @db.Text
+  posterPath   String?
+  backdropPath String?
+  releaseDate  String?
+  voteAverage  Float?
+  popularity   Float?
+  genresJson   Json
+  keywordsJson Json?
+  castJson     Json?
+  videoKey     String?
+  tagline      String?
+  runtime      Int?
+  updatedAt    DateTime @updatedAt
+}
+
+model Rating {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movieTmdbId Int
+  value       Float
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, movieTmdbId])
+  @@index([movieTmdbId])
+  @@index([userId])
+}
+
+model WatchEvent {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movieTmdbId Int
+  progress    Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, movieTmdbId])
+  @@index([userId])
+}
+
+model SavedMovie {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movieTmdbId Int
+  kind        SavedKind
+  createdAt   DateTime  @default(now())
+
+  @@unique([userId, movieTmdbId, kind])
+  @@index([userId])
+}
+
+enum SavedKind {
+  WATCHLIST
+  LIKE
+  DISLIKE
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movieTmdbId Int
+  body        String   @db.Text
+  createdAt   DateTime @default(now())
+
+  @@index([movieTmdbId])
+}
