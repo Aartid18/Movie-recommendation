@@ -26,7 +26,8 @@ async function interactionCount(userId: string): Promise<number> {
 
 export async function getHybridRecommendations(userId: string, limit = 18): Promise<HybridRec[]> {
   try {
-    const res = await fetch("http://127.0.0.1:5000/api/recommend/hybrid", {
+    const apiUrl = process.env.NEXT_PUBLIC_FLASK_API_URL || "http://127.0.0.1:5000";
+    const res = await fetch(`${apiUrl}/api/recommend/hybrid`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId, limit }),

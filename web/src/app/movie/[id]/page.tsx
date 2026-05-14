@@ -6,6 +6,7 @@ import { recommendationReason } from "@/lib/recommendations/explain";
 import { ensureUser } from "@/lib/user";
 import { getMovieCredits, getMovieDetail, getSimilarMovies, posterUrl } from "@/lib/tmdb";
 import { Button } from "@/components/ui/button";
+import { WatchlistButton } from "@/components/watchlist-button";
 
 export default async function MoviePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -61,8 +62,14 @@ export default async function MoviePage({ params }: { params: Promise<{ id: stri
             </div>
             <p className="text-lg text-zinc-300 leading-relaxed mb-6 line-clamp-4 md:line-clamp-none">{detail.overview}</p>
             <div className="flex gap-4">
-               <Button className="bg-white text-black hover:bg-zinc-200">Play Trailer</Button>
-               <Button variant="outline" className="bg-white/5 border-white/20 text-white hover:bg-white/10">+ Add to Watchlist</Button>
+               <Button className="bg-white text-black hover:bg-zinc-200" asChild>
+                 <a href="#trailer">Play Trailer</a>
+               </Button>
+               <WatchlistButton 
+                 movieTmdbId={detail.id}
+                 variant="outline" 
+                 className="bg-white/5 border-white/20 text-white hover:bg-white/10" 
+               />
             </div>
           </div>
         </div>
@@ -78,7 +85,7 @@ export default async function MoviePage({ params }: { params: Promise<{ id: stri
         </div>
 
         {detail.trailerKey ? (
-          <div className="mt-8">
+          <div className="mt-8" id="trailer">
             <h2 className="mb-3 text-xl font-semibold">Trailer</h2>
             <div className="aspect-video overflow-hidden rounded-xl border border-white/10">
               <iframe

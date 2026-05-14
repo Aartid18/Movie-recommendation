@@ -141,7 +141,8 @@ def hybrid_recommendations():
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

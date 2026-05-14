@@ -94,3 +94,14 @@ Open [http://localhost:3000](http://localhost:3000).
 - PostgreSQL: Railway/Neon/Supabase
 - Redis cache: Upstash
 - Optional Python recommender microservice: Railway/Render
+
+### Vercel: 500 "Middleware invocation failed" (Clerk)
+
+1. In **Vercel → Project → Settings → Environment Variables**, set the same keys as local:
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+   - `CLERK_SECRET_KEY`
+   - `TMDB_API_KEY`, `DATABASE_URL`, etc.
+2. Set **`NEXT_PUBLIC_APP_URL`** to your live URL, e.g. `https://movie-recommendation012.vercel.app` (no trailing slash). Redeploy after saving.
+3. In **Clerk Dashboard → Configure → Domains**, add your production and preview URLs if Clerk asks (some setups require the exact Vercel hostname).
+
+The app middleware whitelists Clerk internal routes (`/__clerk`, `/clerk-sync-keyless`) and passes **`authorizedParties`** including the current origin and `VERCEL_URL` so sessions validate on deployed hosts.
