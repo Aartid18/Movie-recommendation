@@ -9,7 +9,7 @@ export function WatchlistButton({
   className,
 }: {
   movieTmdbId: number;
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  variant?: "default" | "outline" | "ghost" | "link";
   className?: string;
 }) {
   const [pending, setPending] = useState(false);
