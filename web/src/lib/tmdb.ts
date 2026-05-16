@@ -123,12 +123,19 @@ export async function discoverByGenres(genreIds: number[], page = 1) {
 }
 
 export async function discoverByPerson(personId: number) {
-  const params: Record<string, string> = {
-    sort_by: "popularity.desc",
-    with_cast: String(personId),
-  };
-  const data = await tmdbFetch<{ results: TmdbMovieListItem[] }>("/discover/movie", params);
-  return { results: data?.results ?? [] };
+  const data = await tmdbFetch<{ cast: TmdbMovieListItem[] }>(`/person/${personId}/movie_credits`);
+  if (!data?.cast) return { results: [] };
+  
+  // Deduplicate and sort by popularity
+  const seen = new Set<number>();
+  const uniqueCast = data.cast.filter(movie => {
+    if (seen.has(movie.id)) return false;
+    seen.add(movie.id);
+    return true;
+  });
+
+  const sorted = uniqueCast.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+  return { results: sorted };
 }
 
 export async function getGenreList(): Promise<TmdbGenre[]> {
