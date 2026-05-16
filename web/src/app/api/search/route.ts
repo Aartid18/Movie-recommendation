@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { discoverByGenres, genreNameToIdMap, getGenreList, searchMovies, searchPeople, discoverByPerson } from "@/lib/tmdb";
+import type { TmdbMovieListItem } from "@/lib/tmdb";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export async function GET(req: Request) {
       
       console.log(`[Search] Query: "${q}" -> Found ${topActors.length} matching actors:`, topActors.map(a => a.name).join(", "));
       
-      let allMovies: any[] = [];
+      const allMovies: TmdbMovieListItem[] = [];
       const seenMovieIds = new Set();
       
       // Fetch movies for top matching actors

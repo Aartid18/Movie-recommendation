@@ -27,7 +27,7 @@ export function WatchlistButton({
       } else {
         alert("Added to watchlist!");
       }
-    } catch (error) {
+    } catch {
       alert("An error occurred.");
     } finally {
       setPending(false);

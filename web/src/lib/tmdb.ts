@@ -1,4 +1,3 @@
-import { cacheGet, cacheSet } from "./cache";
 
 const TMDB = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p";
