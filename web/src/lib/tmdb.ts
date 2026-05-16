@@ -122,6 +122,15 @@ export async function discoverByGenres(genreIds: number[], page = 1) {
   return { results: data?.results ?? [] };
 }
 
+export async function discoverByPerson(personId: number) {
+  const params: Record<string, string> = {
+    sort_by: "popularity.desc",
+    with_cast: String(personId),
+  };
+  const data = await tmdbFetch<{ results: TmdbMovieListItem[] }>("/discover/movie", params);
+  return { results: data?.results ?? [] };
+}
+
 export async function getGenreList(): Promise<TmdbGenre[]> {
   const data = await tmdbFetch<{ genres: TmdbGenre[] }>("/genre/movie/list");
   return data?.genres ?? [];

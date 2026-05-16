@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { discoverByGenres, genreNameToIdMap, getGenreList, searchMovies, searchPeople } from "@/lib/tmdb";
+import { discoverByGenres, genreNameToIdMap, getGenreList, searchMovies, searchPeople, discoverByPerson } from "@/lib/tmdb";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +12,13 @@ export async function GET(req: Request) {
   const type = searchParams.get("type") ?? "movie";
   if (q.length < 2) return NextResponse.json({ results: [] });
   try {
+    if (type === "actor") {
+      const data = await searchPeople(q);
+      const first = data.results[0];
+      if (!first) return NextResponse.json({ results: [], actor: null });
+      const movies = await discoverByPerson(first.id);
+      return NextResponse.json({ results: movies.results.slice(0, 16), actor: first.name });
+    }
     if (type === "person") {
       const data = await searchPeople(q);
       return NextResponse.json({ results: data.results.slice(0, 8) });

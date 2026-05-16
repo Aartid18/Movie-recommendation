@@ -22,26 +22,25 @@ export default function SearchPage() {
       }
       setLoading(true);
       try {
-        if (tab === "actor") {
-          const peopleRes = await fetch(`/api/search?type=person&q=${encodeURIComponent(query.trim())}`);
-          const peopleData = await peopleRes.json();
-          const first = peopleData.results?.[0];
-          if (!first?.name) {
-            setItems([]);
-            setMetaTitle("No actor found");
-            return;
-          }
-          const movieRes = await fetch(`/api/search?type=movie&q=${encodeURIComponent(first.name)}`);
-          const movieData = await movieRes.json();
-          setItems(movieData.results ?? []);
-          setMetaTitle(`Movies with ${first.name}`);
-          return;
-        }
-        const type = tab === "genre" ? "genre" : "movie";
+        const type = tab === "genre" ? "genre" : tab === "actor" ? "actor" : "movie";
         const res = await fetch(`/api/search?type=${type}&q=${encodeURIComponent(query.trim())}`);
         const data = await res.json();
+        
+        if (tab === "actor" && !data.actor) {
+          setItems([]);
+          setMetaTitle("No actor found");
+          return;
+        }
+
         setItems(data.results ?? []);
-        setMetaTitle(tab === "genre" ? `Genre: ${data.genre ?? query}` : `Results for "${query}"`);
+        
+        if (tab === "actor") {
+          setMetaTitle(`Movies with ${data.actor}`);
+        } else if (tab === "genre") {
+          setMetaTitle(`Genre: ${data.genre ?? query}`);
+        } else {
+          setMetaTitle(`Results for "${query}"`);
+        }
       } finally {
         setLoading(false);
       }
